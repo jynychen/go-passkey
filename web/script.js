@@ -1,5 +1,20 @@
 document.getElementById('registerButton').addEventListener('click', register);
 document.getElementById('loginButton').addEventListener('click', login);
+document.getElementById('checkAuthButton').addEventListener('click', async function(event) {
+    event.preventDefault();
+    try {
+        const response = await fetch('/private', { method: 'GET', credentials: 'include', redirect: 'manual' });
+        if (response.status === 200) {
+            showMessage('Authenticated!', false);
+        } else if (response.status === 401) {
+            showMessage('Not authenticated.', true);
+        } else {
+            showMessage('Unexpected response: ' + response.status, true);
+        }
+    } catch (error) {
+        showMessage('Error: ' + error.message, true);
+    }
+});
 
 
 function showMessage(message, isError = false) {

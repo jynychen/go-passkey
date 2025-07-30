@@ -316,20 +316,20 @@ func LoggedInMiddleware(next http.Handler) http.Handler {
 
 		sid, err := r.Cookie("sid")
 		if err != nil {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, "/", http.StatusUnauthorized)
 
 			return
 		}
 
 		session, ok := datastore.GetSession(sid.Value)
 		if !ok {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, "/", http.StatusUnauthorized)
 
 			return
 		}
 
 		if session.Expires.Before(time.Now()) {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, "/", http.StatusUnauthorized)
 
 			return
 		}
