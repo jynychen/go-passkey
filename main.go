@@ -34,7 +34,7 @@ type PasskeyStore interface {
 	GetOrCreateUser(userName string) PasskeyUser
 	SaveUser(PasskeyUser)
 	GenSessionID() (string, error)
-	GetSession(token string) (webauthn.SessionData, bool)
+	GetSession(token string) (*webauthn.SessionData, bool)
 	SaveSession(token string, data webauthn.SessionData)
 	DeleteSession(token string)
 }
@@ -144,7 +144,7 @@ func FinishRegistration(w http.ResponseWriter, r *http.Request) {
 	// In out example username == userID, but in real world it should be different
 	user := datastore.GetOrCreateUser(string(session.UserID)) // Get the user
 
-	credential, err := webAuthn.FinishRegistration(user, session, r)
+	credential, err := webAuthn.FinishRegistration(user, *session, r)
 	if err != nil {
 		msg := fmt.Sprintf("can't finish registration: %s", err.Error())
 		l.Printf("[ERRO] %s", msg)
@@ -229,7 +229,7 @@ func FinishLogin(w http.ResponseWriter, r *http.Request) {
 	// In out example username == userID, but in real world it should be different
 	user := datastore.GetOrCreateUser(string(session.UserID)) // Get the user
 
-	credential, err := webAuthn.FinishLogin(user, session, r)
+	credential, err := webAuthn.FinishLogin(user, *session, r)
 	if err != nil {
 		l.Printf("[ERRO] can't finish login: %s", err.Error())
 		panic(err)
